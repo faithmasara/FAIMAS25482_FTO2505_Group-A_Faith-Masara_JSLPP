@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kanban Board</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            boardBg: '#F4F7FC',
+            boardBgDark: '#0B1220',
+            card: '#FFFFFF',
+            cardDark: '#0F172A',
+            ink: '#0F172A',
+            inkDark: '#E5E7EB',
+            sub: '#64748B',
+            subDark: '#94A3B8',
+            violetBrand: '#6E56CF',
+          },
+          boxShadow: {
+            card: '0 1px 0 rgba(2,6,23,0.04), 0 1px 3px rgba(2,6,23,0.06)',
+            cardDark: '0 1px 0 rgba(255,255,255,0.03), 0 1px 3px rgba(0,0,0,0.4)',
+          },
+          borderRadius: { xl2: '14px' },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial; }
+    .nice-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+    .nice-scroll::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 8px; }
+    .dark .nice-scroll::-webkit-scrollbar-thumb { background: #334155; }
+    .modal-open { overflow: hidden; }
+    .toggle { width: 48px; height: 28px; border-radius: 9999px; position: relative; }
+    .toggle-dot { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 9999px; transition: transform .2s ease; }
+    input[type="checkbox"]:checked + .toggle .toggle-dot { transform: translateX(20px); }
+  </style>
+</head>
+
+<body class="h-full bg-boardBg dark:bg-boardBgDark text-ink dark:text-inkDark flex">
+
+  <!-- Sidebar (desktop) -->
+  <aside class="hidden md:flex flex-col bg-white dark:bg-[#0f1527] w-64 border-r border-slate-200 dark:border-slate-800 p-6">
+    <!-- Brand (desktop) -->
+    <div class="flex items-center gap-3 mb-10">
+      <!-- LOGO LINK + IMAGE  -->
+      <a id="assets/logo-light.svg" href="assets/logo-light.svg" class="block w-10 h-10 shrink-0" aria-label="Brand">
+        <img id="assets/logo-light.svg" src="assets/logo-light.svg" alt="Kanban Logo" class="w-full h-full object-contain">
+      </a>
+      <h1 class="text-2xl font-bold">kanban</h1>
+    </div>
+
+    <p class="text-sub dark:text-subDark text-xs tracking-wider mb-3">ALL BOARDS (1)</p>
+
+    <!-- Active board pill -->
+    <div class="relative mb-8">
+      <div class="absolute inset-0 rounded-full bg-violetBrand/15 blur-[2px]"></div>
+      <button class="relative w-full text-left bg-violetBrand text-white rounded-full px-5 py-3 font-medium" disabled>
+        Launch Career
+      </button>
+    </div>
+
+    <!-- Theme toggle (desktop) -->
+    <div class="mt-auto pt-6 border-t border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-sub dark:text-subDark">Dark Mode</span>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input id="themeDesktop" type="checkbox" class="sr-only peer" />
+          <div class="toggle bg-slate-200 dark:bg-slate-700">
+            <div class="toggle-dot bg-white dark:bg-slate-300"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile top bar -->
+  <header class="md:hidden w-full fixed top-0 left-0 right-0 z-40 bg-white dark:bg-[#0f1527] border-b border-slate-200 dark:border-slate-800">
+    <div class="flex items-center justify-between px-4 py-3">
+      <!-- Brand (mobile): logo link doubles as menu opener if href is '#' -->
+      <a id="brandLogoMobileLink" href="#" class="flex items-center gap-2" aria-label="Brand">
+        <img id="brandLogoMobile" src="YOUR_LOGO_URL_HERE" alt="Kanban Logo" class="w-10 h-10 object-contain">
+        <span class="text-lg font-bold">kanban</span>
+      </a>
+
+      <button id="addTaskBtnMobile" class="bg-violetBrand hover:bg-violetBrand/90 text-white rounded-xl px-4 py-2 text-sm">
+        + Add
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile drawer -->
+  <div id="mobileDrawer" class="md:hidden fixed inset-0 z-50 hidden">
+    <div id="mobileBackdrop" class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+    <div class="absolute top-0 left-0 w-[85%] max-w-[320px] h-full bg-white dark:bg-[#0f1527] border-r border-slate-200 dark:border-slate-800 p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold">Menu</h3>
+        <button id="closeMobileMenu" aria-label="Close menu" class="text-2xl leading-none">×</button>
+      </div>
+      <p class="text-sub dark:text-subDark text-xs tracking-wider mb-3">ALL BOARDS (1)</p>
+      <div class="relative mb-8">
+        <div class="absolute inset-0 rounded-full bg-violetBrand/15 blur-[2px]"></div>
+        <button class="relative w-full text-left bg-violetBrand text-white rounded-full px-5 py-3 font-medium" disabled>
+          Launch Career
+        </button>
+      </div>
+
+      <!-- Theme toggle (mobile) -->
+      <div class="mt-auto pt-6 border-t border-slate-200 dark:border-slate-800">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-sub dark:text-subDark">Dark Mode</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input id="themeMobile" type="checkbox" class="sr-only peer" />
+            <div class="toggle bg-slate-200 dark:bg-slate-700">
+              <div class="toggle-dot bg-white dark:bg-slate-300"></div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <main class="flex-1 p-4 md:p-8 w-full pt-[64px] md:pt-0">
+    <div class="flex items-center justify-between mb-6 md:mb-8">
+      <h2 class="text-2xl font-semibold text-ink dark:text-inkDark">Launch Career</h2>
+
+      <button id="addTaskBtn" class="hidden md:inline-flex bg-violetBrand hover:bg-violetBrand/90 text-white rounded-2xl px-5 py-3 font-medium shadow-sm">
+        + Add New Task
+      </button>
+    </div>
+
+    <!-- Columns -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- TODO -->
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-2.5 h-2.5 rounded-full bg-violetBrand"></span>
+          <h3 class="text-sm tracking-widest font-bold text-sub dark:text-subDark">TODO (<span id="todoCount">0</span>)</h3>
+        </div>
+        <div id="todoCol" class="space-y-4 nice-scroll"></div>
+      </div>
+
+      <!-- DOING -->
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-2.5 h-2.5 rounded-full bg-violetBrand"></span>
+          <h3 class="text-sm tracking-widest font-bold text-sub dark:text-subDark">DOING (<span id="doingCount">0</span>)</h3>
+        </div>
+        <div id="doingCol" class="space-y-4 nice-scroll"></div>
+      </div>
+
+      <!-- DONE -->
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <h3 class="text-sm tracking-widest font-bold text-sub dark:text-subDark">DONE (<span id="doneCount">0</span>)</h3>
+        </div>
+        <div id="doneCol" class="space-y-4 nice-scroll"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Edit/View Task Modal -->
+  <div id="taskModal" class="hidden fixed inset-0 z-50">
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+
+    <div class="relative max-w-lg w-[92%] md:w-full mx-auto mt-20 md:mt-24 bg-white dark:bg-[#101936] rounded-2xl shadow-xl">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+        <h4 class="text-lg font-semibold">Edit Task</h4>
+        <button id="closeTaskModal" class="text-slate-500 hover:text-slate-300 text-xl" aria-label="Close">×</button>
+      </div>
+
+      <form id="taskForm" class="p-6 space-y-4">
+        <input type="hidden" id="taskId" />
+
+        <div>
+          <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Title</label>
+          <input id="taskTitle" class="w-full border dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violetBrand" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Description</label>
+          <textarea id="taskDesc" rows="3" class="w-full border dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violetBrand"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Status</label>
+            <select id="taskStatus" class="w-full border dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violetBrand">
+              <option value="todo">To Do</option>
+              <option value="doing">Doing</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Priority</label>
+            <select id="taskPriority" class="w-full border dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violetBrand">
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" id="deleteTaskBtn" class="px-4 py-2 rounded-xl border dark:border-slate-700 text-slate-700 dark:text-slate-300">Delete</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-violetBrand text-white hover:bg-violetBrand/90">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div id="addModal" class="hidden fixed inset-0 z-50">
+    <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+
+    <div class="relative max-w-lg w-[92%] md:w-full mx-auto mt-20 md:mt-24 bg-white dark:bg-[#101936] rounded-2xl shadow-xl">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+        <h4 class="text-lg font-semibold">Add New Task</h4>
+        <button id="closeAddModal" class="text-slate-500 hover:text-slate-300 text-xl" aria-label="Close">×</button>
+      </div>
+
+      <form id="addForm" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Title</label>
+          <input id="newTitle" required class="w-full border dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violetBrand" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Description</label>
+          <textarea id="newDesc" rows="3" class="w-full border dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violetBrand"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Status</label>
+            <select id="newStatus" class="w-full border dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violetBrand">
+              <option value="todo">To Do</option>
+              <option value="doing">Doing</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Priority</label>
+            <select id="newPriority" class="w-full border dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violetBrand">
+              <option value="high">High</option>
+              <option value="medium" selected>Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" id="resetAddForm" class="px-4 py-2 rounded-xl border dark:border-slate-700">Reset</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-violetBrand text-white hover:bg-violetBrand/90">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Template used by JS for consistent card styling -->
+  <template id="cardTemplate">
+    <button type="button"
+      class="w-full text-left bg-card dark:bg-cardDark rounded-xl2 p-4 shadow-card dark:shadow-cardDark hover:shadow transition border border-slate-100 dark:border-slate-700">
+      <div class="flex items-start justify-between gap-3">
+        <div class="font-medium text-slate-800 dark:text-slate-100">TITLE</div>
+        <span class="priority badge text-xs px-2 py-1 rounded-full"></span>
+      </div>
+      <!-- optional desc injected if present -->
+    </button>
+  </template>
+
+  <!-- Single JS file (no modules) -->
+  <script src="./app.js"></script>
+</body>
+</html>
+
