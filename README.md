@@ -1,96 +1,210 @@
 # JSL Portfolio Piece: Kanban App Deployment & Features Implementation
+Kanban Board (HTML + Tailwind CDN + JavaScript)
 
-## Overview
+A responsive, Figma-accurate Kanban board with To Do / Doing / Done columns, priority sorting, modals for editing, delete with confirmation, a synced dark mode toggle (desktop + mobile), and full localStorage persistence — all in two files: index.html and app.js.
 
-This project involves **deploying a Kanban app to Netlify**, ensuring the app's functionality and persistence through local storage, and implementing dynamic features such as task editing, deletion, sidebar interaction, and a theme toggle. The goal is to deliver a fully functional, deployable application that is responsive across devices and maintains data consistency. Students will also focus on **clean, modular code** that is well-documented for future development.
+✨ Features
 
-## WHAT to Submit
+Dynamic columns: Tasks render into To Do, Doing, and Done based on status.
 
-- **JSLPP GitHub Repo**: Your JSLPP GitHub repository
-- **Recorded Presentation:** A **5-10 minutes** presentation of your project demonstrating and talking through how you solved the user stories. No slides are neccessary and you will rather showcase your code and project features as you talk through your solutions.
-  - You can use any of these tools to record your presentation [Veed.io](https://www.veed.io/) [Windows recording](https://www.microsoft.com/en-us/windows/learning-center/how-to-record-screen-windows-11), [Zoom](https://www.zoom.com/), [Loom](https://www.loom.com/), [OBS](https://obsproject.com/), [Screencastify](https://www.screencastify.com/)
-  - Make sure your recorded presentation link is publicly accessible and is included in your GitHub README.
+LocalStorage persistence: Tasks & theme survive refreshes and browser restarts.
 
-## HOW to Submit Your Project
+Create / Edit / Delete:
 
-- Push Final Version to GitHub: Ensure your final work is on GitHub.
-- Project Naming Convention: Make sure the name of your GitHub Repository is correct with the right naming convention. The naming convention is given in the GitHub Repo title. `StudentNo_Classcode_Group_Name-Surname_JSLPP`
-- Include Presentation Assets: Include your recorded presentation link in your GitHub README.
-- Deployment Link: Include a link to your deployed app in your GitHub README.
-- Provide LMS Link: Submit your Project GitHub link via the [Projects] tab > JSLPP PORTFOLIO PIECE > on the Learning Management System.
+Add new tasks via Add Task modal.
 
-## Before You Begin
+Click any task to open Edit Task modal (title, description, status, priority).
 
-**Check out the [Figma Reference File](https://www.figma.com/design/y7bFCUYL5ZHfPeojACBXg2/Challenges-%7C-JSL?node-id=6033-11092&t=XbQhBWPYxXDAqp3x-1) and the project user stories in your student dashboard** before you start building.
+Delete asks for confirmation; cancel preserves data.
 
-## Key Objectives
+Priority levels: High / Medium / Low show as badges on cards and drive auto-sorting (High → Medium → Low) within each column.
 
-### Deployment & Hosting
+Responsive design: Desktop sidebar; mobile slide-in drawer opened via the logo.
 
-- **Prepare the Kanban app files** for deployment, ensuring the project structure aligns with best practices for deployment.
-- **Deploy the Kanban app to Netlify**, following the process of uploading your project and setting a custom deployment link.
-- Test the deployed app to ensure that all features, including task creation, editing, local storage, and sorting, work as expected in a live environment.
+Dark mode: Toggle in both desktop sidebar and mobile drawer — synced & saved.
 
-### Initial Data Fetching & Loading State
+Logo slots: Plug-and-play logo image + link for both desktop and mobile.
 
-- **Fetch tasks dynamically** from an API: https://jsl-kanban-api.vercel.app/
+🧩 Tech Stack
 
-- **Replace any hard-coded task data**, to ensure the application receives the most up-to-date tasks.
+HTML (semantic structure)
 
-- **Display a loading message** while the tasks are being fetched so that users are informed the data is loading.
-- If fetching fails, **show an error message** to alert users to the issue.
+Tailwind CSS (CDN) – no build step required
 
-### Data Persistence
+JavaScript (Vanilla) – DOM manipulation, events, localStorage
 
-- **Store fetched tasks in local storage** to ensure data persists across page reloads.
-- On startup, **load tasks from local storage** and display them in their respective columns (To Do, Doing, Done) to maintain an organized task board.
+📂 Project Structure
+/ (repo root)
+├─ index.html        # UI, layout, modals, and logo slots
+├─ app.js            # Logic: render, CRUD, sorting, theme, storage
+└─ images/           # (optional) your logo or assets
 
-### Task Editing & Deletion
+🚀 Getting Started
+1) Clone & open locally
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
 
-- Allow users to **edit task details** (title, description, status) in a modal. Upon saving, the task should reflect the updated data on the board and in local storage.
-- Implement a **delete button** within the modal to allow users to remove tasks. A confirmation message should appear before deleting a task, and if confirmed, the task will be removed from both the task board and local storage.
+2) Run with VS Code Live Server (or any static server)
 
-### Sidebar Interaction
+Open the folder in VS Code
 
-- Implement a **sidebar** that contains all required elements as shown in the Figma design.
-- Allow the sidebar to be **toggleable**, so users can hide or show it based on their preferences.
-- Provide a mobile version of the sidebar that can be **accessed from the app logo**, and ensure it matches the design and functionality of the desktop sidebar.
+Right-click index.html → Open with Live Server
 
-### Mobile Sidebar (Menu) Functionality
+Or use a quick server:
 
-- On mobile, the sidebar should function as a **menu** accessible from the top of the screen.
-- Include the **theme toggle** switch in the mobile menu and ensure all features match the desktop sidebar, as shown in the Figma design.
-- Ensure that the mobile menu is **closable**, allowing users to dismiss it for an unobstructed view of the tasks.
+npx serve .
+# or
+python3 -m http.server 5173
 
-### Theme Toggle (Dark/Light Mode)
+3) Configure your logo (optional)
 
-- Include a **theme toggle switch** to allow users to switch between dark mode and light mode.
-- The toggle should be functional in both the **desktop sidebar** and the **mobile menu** for consistent theme switching across devices.
-- Ensure all elements of the **Kanban board** are styled appropriately in dark mode, ensuring good contrast and readability.
+In index.html, replace the placeholders:
 
-### Stretch Goal: Adding Priority (Optional)
+<!-- Desktop -->
+<a id="brandLogoDesktopLink" href="YOUR_LOGO_LINK_HERE" class="block w-10 h-10">
+  <img id="brandLogoDesktop" src="YOUR_LOGO_URL_HERE" alt="Kanban Logo" class="w-full h-full object-contain">
+</a>
 
-Enhance your task management application by introducing a **priority system**. Users should be able to select a priority level—**High, Medium, or Low**—when creating or editing tasks. The priority should be:
+<!-- Mobile (acts as menu opener if href="#" ) -->
+<a id="brandLogoMobileLink" href="#" class="flex items-center gap-2">
+  <img id="brandLogoMobile" src="YOUR_LOGO_URL_HERE" alt="Kanban Logo" class="w-10 h-10 object-contain">
+  <span class="text-lg font-bold">kanban</span>
+</a>
 
-- **Visually displayed** on each task card as shown on the Figma design to clearly communicate urgency.
-- **Saved to local storage** to ensure persistence across page reloads.
-- **Editable** so users can adjust a task's importance as needed.
-- **Reflected immediately** on the UI upon changes.
-- **Sorted automatically** within each status column by priority (High → Medium → Low), with **High-priority tasks appearing at the top**.
-- **Persistently ordered**, maintaining correct priority display after refreshing the page.
 
-## Code Quality & Maintainability
+If brandLogoMobileLink’s href="#", tapping the logo opens the mobile menu.
 
-- **Break the code into separate modules** with clear responsibilities (e.g., local storage handling, task rendering, modal management) to improve maintainability and scalability.
-- Use **descriptive, meaningful variable and function names** to make the code easy to understand.
-- **Document every major function and module** using **JSDoc comments** to explain the purpose, parameters, and return values of each part of the code.
+If you set a real URL, it will navigate there instead.
 
-## Expected Outcome
+4) First run behavior
 
-A fully functional Kanban app that:
+On first load, the board seeds with initial demo tasks (matching the design).
 
-- Dynamically fetches and displays tasks.
-- Supports task editing, deletion, and persistent storage through local storage.
-- Has a responsive, mobile-friendly sidebar with a theme toggle switch.
-- App deployed to **Netlify** with a custom, readable URL.
-- Uses modular, well-documented code that is easy to maintain and scale.
+After that, your edits and new tasks are stored in localStorage.
+
+🖱️ How to Use
+
+Add a task:
+Click + Add (mobile) or + Add New Task (desktop) → fill in title, description, status, priority → Create.
+
+Edit a task:
+Click a task card → update fields → Save.
+
+Changing status moves it to the right column.
+
+Changing priority re-sorts it within the column.
+
+Delete a task:
+In the Edit modal, click Delete → confirm prompt → task is removed from the board & storage.
+
+Dark mode:
+Toggle Dark Mode in the desktop sidebar or mobile drawer. It’s synced and remembered.
+
+🧠 Design Decisions
+
+Two-file simplicity: Everything works without bundlers or module loaders.
+
+Priority sorting: Keeps urgent work visible at the top (High → Medium → Low).
+
+Persistence by default: User changes always stick via localStorage.
+
+Dark mode via class="dark": Tailwind’s darkMode: 'class' keeps styling controllable and explicit.
+
+🌐 Deploy to Netlify
+Option A — Drag & Drop
+
+Zip or select your project folder containing index.html and app.js.
+
+Go to app.netlify.com → Sites → Add new site → Deploy manually.
+
+Drop the folder — done!
+
+Option B — Import from Git
+
+Push to GitHub/GitLab/Bitbucket.
+
+Add new site → Import from Git on Netlify.
+
+Settings:
+
+Build command: (leave empty)
+
+Publish directory: .
+
+Deploy.
+
+(Optional) netlify.toml
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/app.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+🐛 Troubleshooting
+
+Nothing is clickable / no theme toggle / no tasks appear
+
+Make sure app.js is loaded at the end of index.html:
+
+<script src="./app.js"></script>
+
+
+Open DevTools → Console for errors and Network for 404s.
+
+Check filename case (app.js vs App.js) and path (./app.js).
+
+Logo not showing
+
+Ensure your image path exists or use an absolute URL (e.g., https://.../logo.svg).
+
+Try opening https://<yoursite>.netlify.app/images/logo.png directly.
+
+LocalStorage didn’t load
+
+Clear site storage or use a private window to re-seed starter tasks.
+
+Inspect Application → Local Storage to view/edit raw data.
+
+🧪 Manual Test Checklist
+
+ Add task → appears in correct column & persists.
+
+ Edit title → card updates immediately & persists.
+
+ Edit description → reopen modal shows saved text.
+
+ Change status → task moves columns & persists.
+
+ Change priority → card re-orders (High → Medium → Low) & persists.
+
+ Delete → confirm removes; cancel does nothing.
+
+ Dark mode → toggle in desktop & mobile; synced and persisted.
+
+ Mobile drawer opens from logo (when href="#") and closes via ×, backdrop, or Esc.
+
+📝 Scripts / Commands
+
+None required for build. Use any static server:
+
+npx serve .
+# or:
+python3 -m http.server 5173
+
+📜 License
+
+MIT — feel free to use, modify, and share.
+
+🙌 Acknowledgements
+
+Tailwind CSS (CDN) for rapid, responsive styling.
+
+Figma-inspired layout for the Kanban look and feel.
