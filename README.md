@@ -1,6 +1,10 @@
 # JSL Portfolio Piece: Kanban App Deployment & Features Implementation
 Kanban Board (HTML + Tailwind CDN + JavaScript)
 
+veed link to presentation; https://www.veed.io/view/5b34aea5-60a9-4dbb-9fde-0d61d0481531?panel=share
+
+https://app.netlify.com/projects/gorgeous-daifuku-05d5aa/deploys
+
 A responsive, Figma-accurate Kanban board with To Do / Doing / Done columns, priority sorting, modals for editing, delete with confirmation, a synced dark mode toggle (desktop + mobile), and full localStorage persistence — all in two files: index.html and app.js.
 
 ✨ Features
@@ -208,3 +212,6 @@ MIT — feel free to use, modify, and share.
 Tailwind CSS (CDN) for rapid, responsive styling.
 
 Figma-inspired layout for the Kanban look and feel.
+
+
+
